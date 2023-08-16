@@ -1,0 +1,21 @@
+name: trading
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.8
+  - numpy
+  - pandas
+  - matplotlib
+  - jupyter
+  - scipy
+  - scikit-learn
+  - ta-lib
+  - yfinance
+  - pip
+  - pip:
+    - ibpy2
+    - alpaca-trade-api
+    - cloudscraper
+    - beautifulsoup4
+    - selenium
