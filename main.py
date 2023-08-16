@@ -35,22 +35,35 @@ def scrape_forex_factory_between_dates(start_date, end_date, file_path):
         table = soup.find('table', class_='calendar__table')
         
         for row in table.find_all('tr', class_='calendar__row'):
-            event_time = row.find('td', class_='calendar__time')
-            if event_time:
-                event_time = get_date_time(event_time.text.strip())
-            
+            try:
+                event_time = row.find('td', class_='calendar__time')
                 if event_time:
-                    currency = row.find('td', class_='currency').text.strip()
-                    impact = row.find('td', class_='impact').find('span')['class'][0]
-                    event = row.find('td', class_='event').find('span').text.strip()
-                    previous = row.find('td', class_='previous').text.strip()
-                    forecast = row.find('td', class_='forecast').text.strip()
-                    actual = row.find('td', class_='actual').text.strip()
-                    
-                    with open(file_path, 'a', newline='') as file:
-                        csv_writer = csv.writer(file)
-                        # Write the extracted data to the file
-                        csv_writer.writerow([url_date_format, event_time, currency, impact, event, previous, forecast, actual])
+                    event_time = get_date_time(event_time.text.strip())
+
+                currency_elem = row.find('td', class_='currency')
+                currency = currency_elem.text.strip() if currency_elem else 'N/A'
+
+                impact_elem = row.find('td', class_='impact')
+                impact = impact_elem.find('span')['class'][0] if impact_elem else 'N/A'
+
+                event_elem = row.find('td', class_='event')
+                event = event_elem.find('span').text.strip() if event_elem and event_elem.find('span') else 'N/A'
+
+                previous_elem = row.find('td', class_='previous')
+                previous = previous_elem.text.strip() if previous_elem else 'N/A'
+
+                forecast_elem = row.find('td', class_='forecast')
+                forecast = forecast_elem.text.strip() if forecast_elem else 'N/A'
+
+                actual_elem = row.find('td', class_='actual')
+                actual = actual_elem.text.strip() if actual_elem else 'N/A'
+
+                with open(file_path, 'a', newline='') as file:
+                    csv_writer = csv.writer(file)
+                    # Write the extracted data to the file
+                    csv_writer.writerow([url_date_format, event_time, currency, impact, event, previous, forecast, actual])
+            except Exception as e:
+                print(f"Error: {e}")
         
         # Move to the next date
         current_date += timedelta(days=1)
